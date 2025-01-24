@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 
 # Page configuration
@@ -41,8 +42,9 @@ with col4:
         with col_right:
             st.image("static/assets/light.png", width=30)  # Sun image
 with col5:
-    # Display the "Sign Up" link/card
-    st.markdown("<div class='top-card'>Sign Up</div>", unsafe_allow_html=True)
+    # Display the "Sign Up" link/card and redirect to the sign up page
+    if st.button("Sign Up"):
+        st.session_state.page = "signup"
 
 # Title Section: This section contains the main heading for the app
 st.markdown("<div class='title'>Brainrot Chat Bot</div>", unsafe_allow_html=True)
@@ -74,4 +76,10 @@ with st.form(key="chat_form"):
 # If the user has submitted a message, append it to the session state and trigger a re-render of the app
 if submit_button and user_input:
     st.session_state["messages"].append(user_input)  # Add user input to the chat history
-    st.write("")  # Forces Streamlit to re-run the script and re-render the app (to display new messages)
+    st.write("")  # Forces Streamlit to re-run the script and re-render the app
+
+# Check for navigation to the Sign Up page
+if "page" in st.session_state and st.session_state.page == "signup":
+    # Importing and running signup.py from within the app
+    st.session_state.page = None  # Reset the page state after redirecting
+    os.system("streamlit run signup.py")  # Open the signup.py script in a new Streamlit process
