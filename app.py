@@ -46,8 +46,43 @@ def signup():
         st.success('Account created sucessfully!')
     except Exception as e:
         st.error('Error creating account')
-    
 
+def google_login():
+    try:
+       provider_id = 'google.com'
+
+       auth_url = (
+            f"https://{firebaseConfig['authDomain']}"
+            f"/v2/auth?provider={provider_id}"
+            f"&apiKey={firebaseConfig['apiKey']}"
+            f"&redirect_uri=http://localhost:8501"
+            f"&response_type=code"
+       )
+
+        #Creating Google Sign in Styling
+       st.markdown(f"""
+            <a href="{auth_url}" target="_self">
+                <button style="
+                    background-color: white;
+                    color: #757575;
+                    padding: 10px 20px;
+                    border: 1px solid #757575;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    width: 100%;
+                    justify-content: center;
+                    margin: 5px 0;">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18">
+                    Sign in with Google
+                </button>
+            </a>
+        """, unsafe_allow_html=True)
+    
+    except Exception as e:
+        st.error(f'Error setting up Google Loing: {str(e)}')
 
 
 # Custom CSS for styling
@@ -118,11 +153,15 @@ with col3:
             st.text_input("Email", key="login_email")
             st.text_input("Password", type="password", key="login_password")
             st.button("Login", on_click=login)
+            st.markdown('---')
+            google_login()
         
         with st.expander("Sign Up"):
             st.text_input("Email", key="signup_email")
             st.text_input("Password", type="password", key="signup_password")
             st.button("Sign Up", on_click=signup)
+            st.markdown('---')
+            google_login()
     else:
         st.markdown("<div class='top-right-card'><b>Welcome!</b></div>", unsafe_allow_html=True)
         if st.button("Logout"):
