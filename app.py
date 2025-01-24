@@ -1,8 +1,5 @@
-import firebase_admin.auth
 import streamlit as st
 import pyrebase
-import firebase_admin
-from firebase_admin import credentials, auth
 from config import firebaseConfig
 
 # Page configuration
@@ -11,15 +8,9 @@ st.set_page_config(
     page_icon="🧠",
     layout="wide",
 )
-
-
-
-#Initialize Firebase
-if not firebase_admin._apps:
-    cred = credentials.Certificate('serviceAccount.json')
-    firebase_admin.initialize_app(cred)
-
-auth = firebase_admin.auth
+#Pybase setup
+firebase = pyrebase.initialize_app(firebaseConfig)
+auth = firebase.auth()
 
 #Initialize session state
 if 'user' not in st.session_state:
@@ -29,8 +20,8 @@ if 'user' not in st.session_state:
 def login():
     try:
         email = st.session_state.login_email
-        password = st.session_state.lofin_password
-        user = auth.sign_in_with_email_and_password
+        password = st.session_state.login_password
+        user = auth.sign_in_with_email_and_password(email, password)
         st.session_state.user = user
         st.success('Login sucessful!')
 
@@ -41,22 +32,20 @@ def signup():
     try:
         email = st.session_state.signup_email
         password = st.session_state.signup_password
-        user = auth.sign_in_with_email_and_password(email, password)
+        user = auth.create_user_with_email_and_password(email, password)
         st.session_state.user = user
         st.success('Account created sucessfully!')
     except Exception as e:
-        st.error('Error creating account')
+        st.error(f'Error creating account: {str(e)}')
 
 def google_login():
     try:
        provider_id = 'google.com'
 
        auth_url = (
-            f"https://{firebaseConfig['authDomain']}"
-            f"/v2/auth?provider={provider_id}"
-            f"&apiKey={firebaseConfig['apiKey']}"
-            f"&redirect_uri=http://localhost:8501"
-            f"&response_type=code"
+            f"https://{firebaseConfig['authDomain']}/__/auth/handler?"
+            f"apiKey={firebaseConfig['apiKey']}&providerId={provider_id}&"
+            f"redirect_uri=http://localhost:8501&response_type=token&prompt=select_account"
        )
 
         #Creating Google Sign in Styling
@@ -82,7 +71,7 @@ def google_login():
         """, unsafe_allow_html=True)
     
     except Exception as e:
-        st.error(f'Error setting up Google Loing: {str(e)}')
+        st.error(f'Error setting up Google Login : {str(e)}')
 
 
 # Custom CSS for styling
