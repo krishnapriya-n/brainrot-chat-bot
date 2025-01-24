@@ -1,0 +1,142 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;  /* Sets the font for the entire page */
+}
+
+/* Dark Mode Styling */
+.dark-mode {
+    background: #121212;  /* Sets a dark background color for dark mode */
+    color: white;  /* Changes text color to white in dark mode */
+}
+
+/* Styling for top bar cards */
+.top-card {
+    background: #f7dc6f;  /* Background color of the card (light yellow) */
+    padding: 10px;  /* Adds padding inside the card */
+    text-align: center;  /* Centers the text horizontally */
+    border-radius: 5px;  /* Rounds the corners of the card */
+    font-weight: bold;  /* Makes the text bold */
+}
+
+/* Empty top bar card (for centering the title) */
+.top-card.empty {
+    background-color: transparent;  /* Ensures no background color */
+    border: none;  /* Removes any border */
+}
+
+/* Main title styling */
+.title {
+    font-size: 2rem;  /* Sets the font size to 2rem (larger text) */
+    font-weight: bold;  /* Makes the title bold */
+    text-align: center;  /* Centers the title text */
+    margin-top: 20px;  /* Adds space between the top navigation bar and the title */
+}
+
+/* Subtitle styling */
+.subtitle {
+    text-align: center;  /* Centers the subtitle text */
+    font-size: 1.2rem;  /* Sets the font size for the subtitle */
+    margin-top: 10px;  /* Adds space between the title and the subtitle */
+    color: #8e44ad;  /* Sets a purple color for the subtitle text */
+}
+
+/* Chatbox container styling */
+.chat-container {
+    background: white;  /* White background for the chat container */
+    padding: 20px;  /* Adds padding inside the container */
+    border-radius: 15px;  /* Rounds the corners of the container */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);  /* Adds a subtle shadow around the container */
+    max-height: 400px;  /* Sets the maximum height for the chat container */
+    overflow-y: auto;  /* Adds a vertical scrollbar if the content overflows */
+    margin-top: 20px;  /* Adds space between the subtitle and the chat container */
+}
+
+/* Chat bubble styling */
+.chat-bubble {
+    background: #85C1E9;  /* Light blue background for the chat bubble */
+    border-radius: 15px;  /* Rounds the corners of the chat bubble */
+    padding: 10px;  /* Adds padding inside the chat bubble */
+    margin-bottom: 10px;  /* Adds space between chat bubbles */
+    color: white;  /* Sets the text color to white */
+}
+
+/* Toggle Switch Styling */
+.switch {
+  position: relative;  /* Positions the toggle switch relative to its container */
+  display: inline-block;  /* Makes the toggle switch appear inline */
+  width: 60px;  /* Sets the width of the toggle switch */
+  height: 34px;  /* Sets the height of the toggle switch */
+}
+
+/* Hides the default checkbox input */
+.switch input {
+  opacity: 0;  /* Makes the checkbox input invisible */
+  width: 0;  /* Removes the width of the checkbox input */
+  height: 0;  /* Removes the height of the checkbox input */
+}
+
+/* Slider styling for the toggle switch */
+.slider {
+  position: absolute;  /* Positions the slider inside the switch */
+  cursor: pointer;  /* Changes the cursor to a pointer when hovering over the slider */
+  top: 0;  /* Aligns the slider at the top */
+  left: 0;  /* Aligns the slider at the left */
+  right: 0;  /* Aligns the slider at the right */
+  bottom: 0;  /* Aligns the slider at the bottom */
+  background-color: #ccc;  /* Sets a gray background color for the slider */
+  -webkit-transition: .4s;  /* Smooth transition for WebKit-based browsers */
+  transition: .4s;  /* Smooth transition for other browsers */
+}
+
+/* The circle inside the slider */
+.slider:before {
+  position: absolute;  /* Positions the circle inside the slider */
+  content: "";  /* Creates an empty content box for the circle */
+  height: 26px;  /* Sets the height of the circle */
+  width: 26px;  /* Sets the width of the circle */
+  left: 4px;  /* Aligns the circle to the left with a 4px gap */
+  bottom: 4px;  /* Aligns the circle to the bottom with a 4px gap */
+  background-color: white;  /* Sets the circle’s color to white */
+  -webkit-transition: .4s;  /* Smooth transition for WebKit-based browsers */
+  transition: .4s;  /* Smooth transition for other browsers */
+}
+
+/* When the checkbox is checked, the slider changes color */
+input:checked + .slider {
+  background-color: #2196F3;  /* Sets the slider background color to blue when checked */
+}
+
+/* Focused state of the checkbox (when it is clicked) */
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;  /* Adds a blue glow around the slider when focused */
+}
+
+/* Moves the circle to the right when checked */
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);  /* Moves the circle in WebKit browsers */
+  -ms-transform: translateX(26px);  /* Moves the circle in Internet Explorer */
+  transform: translateX(26px);  /* Moves the circle in all browsers */
+}
+
+/* Round slider and circle */
+.slider.round {
+  border-radius: 34px;  /* Rounds the slider corners */
+}
+
+.slider.round:before {
+  border-radius: 50%;  /* Rounds the circle inside the slider */
+}
+
+/* Container for moon, toggle, and sun images */
+.toggle-container {
+  display: flex;  /* Uses Flexbox to align the items */
+  align-items: center;  /* Vertically aligns the items to the center */
+  justify-content: center;  /* Horizontally centers the items */
+  gap: 10px;  /* Adds space between the elements */
+}
+
+/* Styling for moon and sun images */
+.moon-icon, .sun-icon {
+  width: 30px;  /* Sets the width of the moon and sun images */
+  height: 30px;  /* Sets the height of the moon and sun images */
+}
