@@ -3,6 +3,7 @@ import pyrebase
 import firebase_admin
 import firebase_admin 
 import credentials, auth
+from config import firebaseConfig
 
 # Page configuration
 st.set_page_config(
@@ -11,8 +12,7 @@ st.set_page_config(
     layout="wide",
 )
 
-#Firebase Configuration
-from config import firebaseConfig
+
 
 #Initialize Firebase
 firebase = pyrebase.initialize_app(firebaseConfig)
@@ -43,6 +43,8 @@ def signup():
         st.success('Account created sucessfully!')
     except Exception as e:
         st.error('Error creating account')
+    
+
 
 
 # Custom CSS for styling
@@ -108,8 +110,23 @@ with col1:
 with col2:
     st.markdown("<div class='top-left-card'><b>Friends</b></div>", unsafe_allow_html=True)
 with col3:
-    st.markdown("<div class='top-right-card'><b>Sign Up</b></div>", unsafe_allow_html=True)
+    if not st.session_state.user:
+        with st.expander("Login"):
+            st.text_input("Email", key="login_email")
+            st.text_input("Password", type="password", key="login_password")
+            st.button("Login", on_click=login)
+        
+        with st.expander("Sign Up"):
+            st.text_input("Email", key="signup_email")
+            st.text_input("Password", type="password", key="signup_password")
+            st.button("Sign Up", on_click=signup)
+    else:
+        st.markdown("<div class='top-right-card'><b>Welcome!</b></div>", unsafe_allow_html=True)
+        if st.button("Logout"):
+            st.session_state.user = None
+            st.experimental_rerun()
 
+        
 # Title
 st.markdown("<div class='title'>Brainrot Chat Bot</div>", unsafe_allow_html=True)
 st.markdown("<div class='subtitle'>Your study companion</div>", unsafe_allow_html=True)
@@ -118,26 +135,35 @@ st.markdown("<div class='subtitle'>Your study companion</div>", unsafe_allow_htm
 st.markdown("<div class='main-container'>", unsafe_allow_html=True)
 st.markdown("<div class='chat-container' id='chat-container'>", unsafe_allow_html=True)
 
-# Placeholder for chat messages
-if "messages" not in st.session_state:
-    st.session_state["messages"] = []
+# Only show chat interface if user is logged in
+if st.session_state.user:
+    # Chatbox
+    st.markdown("<div class='main-container'>", unsafe_allow_html=True)
+    st.markdown("<div class='chat-container' id='chat-container'>", unsafe_allow_html=True)
 
-for msg in st.session_state["messages"]:
-    st.markdown(
-        f"<div class='chat-bubble'>{msg}</div>",
-        unsafe_allow_html=True,
-    )
+    # Placeholder for chat messages
+    if "messages" not in st.session_state:
+        st.session_state["messages"] = []
 
-st.markdown("</div>", unsafe_allow_html=True)
+    for msg in st.session_state["messages"]:
+        st.markdown(
+            f"<div class='chat-bubble'>{msg}</div>",
+            unsafe_allow_html=True,
+        )
 
-# Input for the chatbox
-with st.form(key="chat_form"):
-    user_input = st.text_input("Let's study, buddy! B)", key="chat_input")
-    submit_button = st.form_submit_button("Send")
+    st.markdown("</div>", unsafe_allow_html=True)
 
-if submit_button and user_input:
-    st.session_state["messages"].append(user_input)
-    st.experimental_rerun()
 
-st.markdown("</div>", unsafe_allow_html=True)
+    # Input for the chatbox
+    with st.form(key="chat_form"):
+        user_input = st.text_input("Let's study, buddy! B)", key="chat_input")
+        submit_button = st.form_submit_button("Send")
+
+    if submit_button and user_input:
+        st.session_state["messages"].append(user_input)
+        st.experimental_rerun()
+
+    st.markdown("</div>", unsafe_allow_html=True)
+else:
+    st.info('Please log in to continue!')
 
