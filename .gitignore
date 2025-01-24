@@ -9,3 +9,4 @@ config.py
 __pycache__/
 *.pyc
 .env
+serviceAccount.json

@@ -1,8 +1,8 @@
+import firebase_admin.auth
 import streamlit as st
 import pyrebase
 import firebase_admin
-import firebase_admin 
-import credentials, auth
+from firebase_admin import credentials, auth
 from config import firebaseConfig
 
 # Page configuration
@@ -15,8 +15,11 @@ st.set_page_config(
 
 
 #Initialize Firebase
-firebase = pyrebase.initialize_app(firebaseConfig)
-auth = firebase.auth()
+if not firebase_admin._apps:
+    cred = credentials.Certificate('serviceAccount.json')
+    firebase_admin.initialize_app(cred)
+
+auth = firebase_admin.auth
 
 #Initialize session state
 if 'user' not in st.session_state:
