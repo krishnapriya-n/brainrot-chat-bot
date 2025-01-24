@@ -1,4 +1,8 @@
 import streamlit as st
+import pyrebase
+import firebase_admin
+import firebase_admin 
+import credentials, auth
 
 # Page configuration
 st.set_page_config(
@@ -6,6 +10,20 @@ st.set_page_config(
     page_icon="🧠",
     layout="wide",
 )
+
+#Firebase Configuration
+firebaseConfig = {
+  'apiKey': "AIzaSyCV-y8jL4y-WKdQmTRKibG_TiXyUcVVwNw",
+  'authDomain': "brainrotchatbot.firebaseapp.com",
+  'projectId': "brainrotchatbot",
+  'storageBucket': "brainrotchatbot.firebasestorage.app",
+  'messagingSenderId': "305468938861",
+  'appId': "1:305468938861:web:9200b735af8a97a4f93d64"
+}
+
+#Initialize Firebase
+firebase = pyrebase.initialize_app(firebaseConfig)
+auth = firebase.auth()
 
 # Custom CSS for styling
 st.markdown(
