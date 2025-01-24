@@ -5,5 +5,7 @@ env/
 .venv/
 
 #Firebase
-
 config.py
+__pycache__/
+*.pyc
+.env

@@ -18,6 +18,33 @@ from config import firebaseConfig
 firebase = pyrebase.initialize_app(firebaseConfig)
 auth = firebase.auth()
 
+#Initialize session state
+if 'user' not in st.session_state:
+    st.session_state.user = None
+
+
+def login():
+    try:
+        email = st.session_state.login_email
+        password = st.session_state.lofin_password
+        user = auth.sign_in_with_email_and_password
+        st.session_state.user = user
+        st.success('Login sucessful!')
+
+    except Exception as e:
+        st.error('Error loggin in')
+
+def signup():
+    try:
+        email = st.session_state.signup_email
+        password = st.session_state.signup_password
+        user = auth.sign_in_with_email_and_password(email, password)
+        st.session_state.user = user
+        st.success('Account created sucessfully!')
+    except Exception as e:
+        st.error('Error creating account')
+
+
 # Custom CSS for styling
 st.markdown(
     """
