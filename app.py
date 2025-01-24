@@ -12,14 +12,7 @@ st.set_page_config(
 )
 
 #Firebase Configuration
-firebaseConfig = {
-  'apiKey': "AIzaSyCV-y8jL4y-WKdQmTRKibG_TiXyUcVVwNw",
-  'authDomain': "brainrotchatbot.firebaseapp.com",
-  'projectId': "brainrotchatbot",
-  'storageBucket': "brainrotchatbot.firebasestorage.app",
-  'messagingSenderId': "305468938861",
-  'appId': "1:305468938861:web:9200b735af8a97a4f93d64"
-}
+from config import firebaseConfig
 
 #Initialize Firebase
 firebase = pyrebase.initialize_app(firebaseConfig)
