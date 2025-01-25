@@ -53,19 +53,292 @@ body {
 
 /* Chat bubble styling */
 .chat-bubble {
-    background: #85C1E9;  /* Light blue background for the chat bubble */
-    border-radius: 15px;  /* Rounds the corners of the chat bubble */
-    padding: 10px;  /* Adds padding inside the chat bubble */
-    margin-bottom: 10px;  /* Adds space between chat bubbles */
-    color: white;  /* Sets the text color to white */
+    max-width: 80%;
+    margin: 8px 0;
+    padding: 12px 16px;
+    border-radius: 15px;
+    position: relative;
+    line-height: 1.5;
+    font-size: 0.95rem;
 }
 
-/* Toggle Switch Styling */
-.switch {
-  position: relative;  /* Positions the toggle switch relative to its container */
-  display: inline-block;  /* Makes the toggle switch appear inline */
-  width: 60px;  /* Sets the width of the toggle switch */
-  height: 34px;  /* Sets the height of the toggle switch */
+.user-message {
+    background: #007bff;
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 5px;
+}
+
+.bot-message {
+    background: #f0f2f5;
+    color: #1a1a1a;
+    margin-right: auto;
+    border-bottom-left-radius: 5px;
+}
+
+/* Add a subtle animation for new messages */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-bubble {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Mode selection styling */
+.stSelectbox {
+    margin-bottom: 1rem;
+    max-width: 200px;
+}
+
+.stSelectbox > div {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.stSelectbox > div:hover {
+    border-color: #007bff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Authentication styling */
+.auth-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-text {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+    border-radius: 12px;
+}
+
+.welcome-text h2 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.welcome-text p {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.auth-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    margin: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.auth-box h3 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.separator {
+    text-align: center;
+    margin: 1rem 0;
+    color: #6c757d;
+    position: relative;
+}
+
+.separator::before,
+.separator::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background: #dee2e6;
+}
+
+.separator::before {
+    left: 0;
+}
+
+.separator::after {
+    right: 0;
+}
+
+/* Mode description styling */
+.mode-description {
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    margin: 1rem 0;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #2c3e50;
+}
+
+.mode-description.duck {
+    border-left: 4px solid #17a2b8;
+}
+
+.mode-description.tutor {
+    border-left: 4px solid #28a745;
+}
+
+/* Mode selector styling */
+.mode-selector {
+    margin-bottom: 1rem;
+}
+
+.mode-selector .stSelectbox {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Form styling */
+.stTextInput > div > div {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 0.5rem;
+    color: black;
+}
+
+.stTextInput > div > div:focus-within {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Button styling */
+.stButton > button {
+    width: 100%;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.stButton > button:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+}
+
+#logout_button {
+    background: #dc3545;
+}
+
+#logout_button:hover {
+    background: #c82333;
+}
+
+/* Chat container styling */
+.chat-container {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    height: 500px;
+    overflow-y: auto;
+    margin: 24px 0;
+    border: 1px solid #e0e0e0;
+}
+
+/* Input form styling */
+.stForm {
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    margin-top: 16px;
+}
+
+/* Title and subtitle improvements */
+.title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, #007bff, #00bcd4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    margin: 24px 0 8px;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 1.25rem;
+    color: #6c757d;
+    margin-bottom: 32px;
+}
+
+/* Top navigation styling */
+.top-card {
+    background: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #1a1a1a;
+    transition: all 0.2s ease;
+    border: 1px solid #e0e0e0;
+    cursor: pointer;
+}
+
+.top-card:hover {
+    background: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Scrollbar styling */
+.chat-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.chat-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.stAlert p {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* Dark mode toggle styling */
+[data-testid="stCheckbox"] {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+[data-testid="stCheckbox"] > label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+[data-testid="stCheckbox"] > label > div {
+    margin-right: 0.5rem;
 }
 
 /* Hides the default checkbox input */

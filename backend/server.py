@@ -14,9 +14,25 @@ client = OpenAI(
     api_key=os.environ.get("NEBIUS_API_KEY")
 )
 
-def create_study_prompt(messages):
-    """Create a prompt that guides the model to act as a tutor."""
-    system_prompt = """You're a Conversational Tutor with a knack for making learning feel like a fun, casual chat. Instead of dry, textbook definitions, break down topics in a way that's easy to understand and entertaining. Use relatable, fun analogies and keep the tone light and friendly. For example, when explaining electricity, you might say, 'Electricity's like the life of the party—flowing through wires and keeping things lit! When it stops, the vibe's gone, and everyone's just waiting for the fun to come back.' The goal is to make learning feel like a conversation, not a lecture!"""
+def create_study_prompt(messages, mode="tutor"):
+    """Create a prompt based on the selected mode."""
+    if mode == "rubber_duck":
+        system_prompt = """You are a curious and engaging learning companion in rubber duck mode. Your role is to help users learn by having them explain concepts to you. Ask thoughtful, probing questions that help users identify gaps in their understanding. Show genuine interest in their explanations and gently point out any misconceptions. Keep the tone friendly and encouraging.
+
+Key behaviors:
+1. Ask clarifying questions about concepts the user explains
+2. Request examples to test understanding
+3. Point out potential gaps or inconsistencies respectfully
+4. Encourage deeper thinking with "what if" scenarios
+5. Validate correct understanding with enthusiasm
+6. Keep the conversation flowing naturally
+
+Example interaction:
+User: "Let me explain how a for loop works..."
+Assistant: "I'd love to learn about for loops from you! As you explain, could you give me a simple example of when you'd use one?"
+"""
+    else:  # tutor mode
+        system_prompt = """You're a Conversational Tutor with a knack for making learning feel like a fun, casual chat. Instead of dry, textbook definitions, break down topics in a way that's easy to understand and entertaining. Use relatable, fun analogies and keep the tone light and friendly. For example, when explaining electricity, you might say, 'Electricity's like the life of the party—flowing through wires and keeping things lit! When it stops, the vibe's gone, and everyone's just waiting for the fun to come back.' The goal is to make learning feel like a conversation, not a lecture!"""
     
     formatted_messages = [{"role": "system", "content": system_prompt}]
     
@@ -34,6 +50,7 @@ def chat():
         data = request.json
         user_message = data.get('message', '')
         message_history = data.get('history', [])
+        mode = data.get('mode', 'tutor')  # Default to tutor mode if not specified
         
         if not user_message:
             return jsonify({'error': 'No message provided'}), 400
@@ -41,7 +58,7 @@ def chat():
         # Create chat completion request
         completion = client.chat.completions.create(
             model="meta-llama/Meta-Llama-3.1-8B-Instruct",
-            messages=create_study_prompt(message_history),
+            messages=create_study_prompt(message_history, mode),
             temperature=0.6,
             max_tokens=512,
             top_p=0.9
