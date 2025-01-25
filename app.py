@@ -1,6 +1,10 @@
 import os
 import streamlit as st
+import pyrebase
 import requests
+from config import firebaseConfig
+from streamlit.runtime.scriptrunner import RerunException
+from streamlit.runtime.scriptrunner.script_runner import RerunData
 
 # Page configuration
 st.set_page_config(
@@ -8,6 +12,94 @@ st.set_page_config(
     page_icon="🧠",  # Set the page icon
     layout="wide",  # Set the layout to 'wide' to use the available space
 )
+#Pybase setup
+firebase = pyrebase.initialize_app(firebaseConfig)
+auth = firebase.auth()
+
+# Initialize session state
+if 'user' not in st.session_state:
+    st.session_state.user = None
+
+def login():
+    try:
+        email = st.session_state.login_email
+        password = st.session_state.login_password
+        user = auth.sign_in_with_email_and_password(email, password)
+        st.session_state.user = user
+        st.success('Login successful!')
+
+    except Exception as e:
+        st.error('Error logging in')
+
+def signup():
+    try:
+        email = st.session_state.signup_email
+        password = st.session_state.signup_password
+        user = auth.create_user_with_email_and_password(email, password)
+        st.session_state.user = user
+        st.success('Account created successfully!')
+        st.markdown("Already have an account? [Login here](#)", unsafe_allow_html=True)  # Added link to login
+    except Exception as e:
+        st.error(f'Error creating account: {str(e)}')
+
+def google_login():
+    try:
+       redirect_uri = "http://localhost:8501"
+       client_id = firebaseConfig.get('clientId')
+       
+       auth_url = (
+            "https://accounts.google.com/o/oauth2/v2/auth?"
+            f"client_id={client_id}&"
+            f"redirect_uri={redirect_uri}&"
+            "response_type=code&"
+            "scope=openid%20email%20profile&"  # Added openid scope
+            "access_type=offline&"
+            "state=state_parameter_passthrough_value&"  # Added state parameter
+            "include_granted_scopes=true&"  # Added include_granted_scopes
+            "prompt=consent"         
+        )
+       
+        # Creating Google Sign in Styling
+       st.markdown(f"""
+            <a href="{auth_url}" target="_self">
+                <button style="
+                    background-color: white;
+                    color: #757575;
+                    padding: 10px 20px;
+                    border: 1px solid #757575;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    width: 100%;
+                    justify-content: center;
+                    margin: 5px 0;">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18">
+                    Sign in with Google
+                </button>
+            </a>
+        """, unsafe_allow_html=True)
+    
+    except Exception as e:
+        st.error(f'Error setting up Google Login: {str(e)}')
+
+def handle_google_callback():
+    try:
+        query_params = st.query_params
+        if 'code' in query_params:
+            try:
+                st.session_state.user = {'auth_code': query_params['code'][0]}
+                st.success('Successfully logged in with Google!')
+                st.query_params.clear()
+                return True
+            except Exception as e:
+                st.error(f'Error processing Google login: {str(e)}')
+                return False    
+        return False
+    except Exception as e:
+       st.error(f'Error handling Google callback: {str(e)}')
+       return False
 
 # Load CSS file to style the app (make sure to have a 'style.css' file in your project directory)
 with open("style.css") as css:
@@ -23,8 +115,36 @@ with col2:
     # Display the "Friends" link/card
     st.markdown("<div class='top-card'>Friends</div>", unsafe_allow_html=True)
 with col3:
-    # Empty space to center the main title
-    st.markdown("<div class='top-card empty'></div>", unsafe_allow_html=True)
+    if handle_google_callback():
+        st.rerun()
+
+    if not st.session_state.user:
+        with st.expander("Login"):
+            st.text_input("Email", key="login_email")
+            st.text_input("Password", type="password", key="login_password")
+            st.button("Login", on_click=login)
+            st.markdown('---')
+            google_login()
+        
+        with st.expander("Sign Up"):
+            st.text_input("Email", key="signup_email")
+            st.text_input("Password", type="password", key="signup_password")
+            st.button("Sign Up", key="signup_button", on_click=signup)
+            st.markdown("Already have an account? [Click on the login section](#)", unsafe_allow_html=True)  # Moved link to login
+            st.markdown('---')
+            google_login()
+
+    if 'logout_trigger' in st.session_state and st.session_state['logout_trigger']:
+        del st.session_state['logout_trigger']
+        st.rerun()  # Ensures rerun
+
+    else:
+        st.markdown("<div class='top-right-card'><b>Welcome!</b></div>", unsafe_allow_html=True)
+        if st.button("Logout"):
+            st.session_state.user = None  # Clear user session
+            st.session_state['logout_trigger'] = True
+            raise RerunException(RerunData(None)) 
+
 with col4:
     # Create a container with left and right images (moon for dark mode and sun for light mode)
     toggle_container = st.container()
@@ -63,8 +183,6 @@ if "messages" not in st.session_state:
 # Loop through and display all previous chat messages stored in session state
 for msg in st.session_state["messages"]:
     st.markdown(f"<div class='chat-bubble'>{msg}</div>", unsafe_allow_html=True)
-
-st.markdown("</div>", unsafe_allow_html=True)
 
 # Input section: A form where users can type their message to send to the bot
 with st.form(key="chat_form"):
