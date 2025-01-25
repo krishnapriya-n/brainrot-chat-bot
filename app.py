@@ -45,6 +45,7 @@ def google_login():
     try:
        redirect_uri = "http://localhost:8501"
        client_id = firebaseConfig.get('clientId')
+       
 
        auth_url = (
             "https://accounts.google.com/o/oauth2/v2/auth?"
@@ -57,7 +58,7 @@ def google_login():
             "include_granted_scopes=true&"  # Added include_granted_scopes
             "prompt=consent"         
         )
-
+       
         #Creating Google Sign in Styling
        st.markdown(f"""
             <a href="{auth_url}" target="_self">
