@@ -84,6 +84,22 @@ def google_login():
     except Exception as e:
         st.error(f'Error setting up Google Login : {str(e)}')
 
+def handle_google_callback():
+    try:
+        query_params = st.query_params
+        if 'code' in query_params:
+            try:
+                st.session_state.user = {'auth_code': query_params['code'][0]}
+                st.success('Successfully logged in with Google!')
+                st.query_params.clear()
+                return True
+            except Exception as e:
+                st.error(f'Error processing Google login: {str(e)}')
+                return False    
+        return False
+    except Exception as e:
+       st.error(f'Error handling Google callback: {str(e)}')
+       return False
 
 # Custom CSS for styling
 st.markdown(
@@ -148,6 +164,9 @@ with col1:
 with col2:
     st.markdown("<div class='top-left-card'><b>Friends</b></div>", unsafe_allow_html=True)
 with col3:
+    if handle_google_callback():
+        st.rerun()
+
     if not st.session_state.user:
         with st.expander("Login"):
             st.text_input("Email", key="login_email")
@@ -164,15 +183,15 @@ with col3:
             google_login()
 
     if 'logout_trigger' in st.session_state and st.session_state['logout_trigger']:
-        # Reset the state or clear user data as needed
         del st.session_state['logout_trigger']
-        st.experimental_rerun()  # Ensures rerun
+        st.rerun()  # Ensures rerun
 
     else:
         st.markdown("<div class='top-right-card'><b>Welcome!</b></div>", unsafe_allow_html=True)
         if st.button("Logout"):
             st.session_state.user = None  # Clear user session
-            raise RerunException(RerunData(None))
+            st.session_state['logout_trigger'] = True
+            raise RerunException(RerunData(None)) 
 
         
 # Title
@@ -183,7 +202,7 @@ st.markdown("<div class='subtitle'>Your study companion</div>", unsafe_allow_htm
 st.markdown("<div class='main-container'>", unsafe_allow_html=True)
 st.markdown("<div class='chat-container' id='chat-container'>", unsafe_allow_html=True)
 
-# Only show chat interface if user is logged in
+
 if st.session_state.user:
     # Chatbox
     st.markdown("<div class='main-container'>", unsafe_allow_html=True)
