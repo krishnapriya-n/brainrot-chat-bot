@@ -43,13 +43,20 @@ def signup():
 
 def google_login():
     try:
-       provider_id = 'google.com'
+       redirect_uri = "http://localhost:8501"
+       client_id = firebaseConfig.get('clientId')
 
        auth_url = (
-            f"https://{firebaseConfig['authDomain']}/__/auth/handler?"
-            f"apiKey={firebaseConfig['apiKey']}&providerId={provider_id}&"
-            f"redirect_uri=http://localhost:8501&response_type=token&prompt=select_account"
-       )
+            "https://accounts.google.com/o/oauth2/v2/auth?"
+            f"client_id={client_id}&"
+            f"redirect_uri={redirect_uri}&"
+            "response_type=code&"
+            "scope=openid%20email%20profile&"  # Added openid scope
+            "access_type=offline&"
+            "state=state_parameter_passthrough_value&"  # Added state parameter
+            "include_granted_scopes=true&"  # Added include_granted_scopes
+            "prompt=consent"         
+        )
 
         #Creating Google Sign in Styling
        st.markdown(f"""
