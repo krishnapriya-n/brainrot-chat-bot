@@ -1,6 +1,9 @@
 import streamlit as st
 import pyrebase
 from config import firebaseConfig
+from streamlit.runtime.scriptrunner import RerunException
+from streamlit.runtime.scriptrunner.script_runner import RerunData
+
 
 # Page configuration
 st.set_page_config(
@@ -151,11 +154,17 @@ with col3:
             st.button("Sign Up", on_click=signup)
             st.markdown('---')
             google_login()
+
+    if 'logout_trigger' in st.session_state and st.session_state['logout_trigger']:
+        # Reset the state or clear user data as needed
+        del st.session_state['logout_trigger']
+        st.experimental_rerun()  # Ensures rerun
+
     else:
         st.markdown("<div class='top-right-card'><b>Welcome!</b></div>", unsafe_allow_html=True)
         if st.button("Logout"):
-            st.session_state.user = None
-            st.experimental_rerun()
+            st.session_state.user = None  # Clear user session
+            raise RerunException(RerunData(None))
 
         
 # Title
