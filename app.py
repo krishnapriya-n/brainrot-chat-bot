@@ -1,15 +1,16 @@
+import os
 import streamlit as st
 import pyrebase
+import requests
 from config import firebaseConfig
 from streamlit.runtime.scriptrunner import RerunException
 from streamlit.runtime.scriptrunner.script_runner import RerunData
 
-
 # Page configuration
 st.set_page_config(
-    page_title="Brainrot Chat Bot",
-    page_icon="🧠",
-    layout="wide",
+    page_title="Brainrot Chat Bot",  # Set the page title displayed in the browser tab
+    page_icon="🧠",  # Set the page icon
+    layout="wide",  # Set the layout to 'wide' to use the available space
 )
 #Pybase setup
 firebase = pyrebase.initialize_app(firebaseConfig)
@@ -101,68 +102,19 @@ def handle_google_callback():
        st.error(f'Error handling Google callback: {str(e)}')
        return False
 
-# Custom CSS for styling
-st.markdown(
-    """
-    <style>
-        body {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
-            color: black;
-            font-family: 'Comic Sans MS', 'Arial', sans-serif;
-        }
-        .main-container {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 20px;
-        }
-        .title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #4CAF50;
-            text-align: center;
-        }
-        .subtitle {
-            font-size: 1.2rem;
-            color: #8e44ad;
-            text-align: center;
-        }
-        .chat-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .chat-bubble {
-            background: #85C1E9;
-            border-radius: 15px;
-            padding: 10px;
-            margin-bottom: 10px;
-            max-width: 70%;
-            color: white;
-        }
-        .chat-input {
-            margin-top: 10px;
-        }
-        .top-right-card, .top-left-card {
-            border-radius: 10px;
-            padding: 15px;
-            background: #F7DC6F;
-            color: black;
-            text-align: center;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+# Load CSS file to style the app (make sure to have a 'style.css' file in your project directory)
+with open("style.css") as css:
+    st.markdown(f"<style>{css.read()}</style>", unsafe_allow_html=True)
 
-# Top bar cards
-col1, col2, col3 = st.columns([1, 1, 1])
+# Top Bar Section: This section contains links or buttons for the app's main features
+# Using st.columns to create columns for each element in the top bar
+col1, col2, col3, col4 = st.columns([1, 1, 2, 1])
 with col1:
-    st.markdown("<div class='top-left-card'><b>Leaderboard</b></div>", unsafe_allow_html=True)
+    # Display the "Leaderboard" link/card
+    st.markdown("<div class='top-card'>Leaderboard</div>", unsafe_allow_html=True)
 with col2:
-    st.markdown("<div class='top-left-card'><b>Friends</b></div>", unsafe_allow_html=True)
+    # Display the "Friends" link/card
+    st.markdown("<div class='top-card'>Friends</div>", unsafe_allow_html=True)
 with col3:
     if handle_google_callback():
         st.rerun()
@@ -178,7 +130,7 @@ with col3:
         with st.expander("Sign Up"):
             st.text_input("Email", key="signup_email")
             st.text_input("Password", type="password", key="signup_password")
-            st.button("Sign Up", on_click=signup)
+            st.button("Sign Up", key="signup_button", on_click=signup)
             st.markdown('---')
             google_login()
 
@@ -193,14 +145,33 @@ with col3:
             st.session_state['logout_trigger'] = True
             raise RerunException(RerunData(None)) 
 
-        
-# Title
-st.markdown("<div class='title'>Brainrot Chat Bot</div>", unsafe_allow_html=True)
-st.markdown("<div class='subtitle'>Your study companion</div>", unsafe_allow_html=True)
+with col4:
+    # Create a container with left and right images (moon for dark mode and sun for light mode)
+    toggle_container = st.container()
+    with toggle_container:
+        col_left, col_toggle, col_right = st.columns([1, 2, 1])  # Adjusted width for columns
+        with col_left:
+            st.image("static/assets/moon.png", width=30)  # Moon image
+        with col_toggle:
+            # Toggle switch HTML for switching between dark and light mode
+            st.markdown(""" 
+                <label class="switch">
+                    <input type="checkbox" id="dark-mode-toggle">
+                    <span class="slider round"></span>
+                </label>
+            """, unsafe_allow_html=True)
+        with col_right:
+            st.image("static/assets/light.png", width=30)  # Sun image
 
-# Chatbox
-st.markdown("<div class='main-container'>", unsafe_allow_html=True)
-st.markdown("<div class='chat-container' id='chat-container'>", unsafe_allow_html=True)
+
+# Title Section: This section contains the main heading for the app
+st.markdown("<div class='title'>Brainrot Chat Bot</div>", unsafe_allow_html=True)
+
+# Subtitle Section: A smaller text under the title that describes the purpose of the app
+st.markdown("<div class='subtitle'>Your Favorite Study Buddy</div>", unsafe_allow_html=True)
+
+# Chatbox Section: The section where users can interact with the chatbot
+st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
 
 
 if st.session_state.user:
@@ -220,17 +191,45 @@ if st.session_state.user:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-
-    # Input for the chatbox
+  # Input section: A form where users can type their message to send to the bot
     with st.form(key="chat_form"):
-        user_input = st.text_input("Let's study, buddy! B)", key="chat_input")
-        submit_button = st.form_submit_button("Send")
+        col_input, col_button = st.columns([4, 1])  # Adjust column sizes for input box and button
+        with col_input:
+            user_input = st.text_input("Enter prompt here", key="chat_input")  # Text input for the user message
+        with col_button:
+            submit_button = st.form_submit_button("Send")  # Button to send the message
 
+  # If the user has submitted a message, send it to the backend and display the response
     if submit_button and user_input:
-        st.session_state["messages"].append(user_input)
-        st.experimental_rerun()
+      # Display user message
+      st.session_state["messages"].append(f"You: {user_input}")
 
-    st.markdown("</div>", unsafe_allow_html=True)
+      try:
+          # Send request to Flask backend
+          response = requests.post(
+              "http://localhost:5000/chat",
+              json={
+                  "message": user_input,
+                  "history": st.session_state["messages"]
+              }
+          )
+
+          if response.status_code == 200:
+              bot_response = response.json()["response"]
+              st.session_state["messages"].append(f"Bot: {bot_response}")
+          else:
+              st.error("Failed to get response from the bot. Please try again.")
+
+      except Exception as e:
+          st.error(f"Error: {str(e)}")
+
+      # Force a rerun to display the new messages
+      st.rerun()
+
+  # Check for navigation to the Sign Up page
+    if "page" in st.session_state and st.session_state.page == "signup":
+      # Importing and running signup.py from within the app
+      st.session_state.page = None  # Reset the page state after redirecting
+      os.system("streamlit run signup.py")  # Open the signup.py script in a new Streamlit process
 else:
     st.info('Please log in to continue!')
-
