@@ -1,5 +1,6 @@
 import os
 import streamlit as st
+import requests
 
 # Page configuration
 st.set_page_config(
@@ -73,10 +74,32 @@ with st.form(key="chat_form"):
     with col_button:
         submit_button = st.form_submit_button("Send")  # Button to send the message
 
-# If the user has submitted a message, append it to the session state and trigger a re-render of the app
+# If the user has submitted a message, send it to the backend and display the response
 if submit_button and user_input:
-    st.session_state["messages"].append(user_input)  # Add user input to the chat history
-    st.write("")  # Forces Streamlit to re-run the script and re-render the app
+    # Display user message
+    st.session_state["messages"].append(f"You: {user_input}")
+    
+    try:
+        # Send request to Flask backend
+        response = requests.post(
+            "http://localhost:5000/chat",
+            json={
+                "message": user_input,
+                "history": st.session_state["messages"]
+            }
+        )
+        
+        if response.status_code == 200:
+            bot_response = response.json()["response"]
+            st.session_state["messages"].append(f"Bot: {bot_response}")
+        else:
+            st.error("Failed to get response from the bot. Please try again.")
+            
+    except Exception as e:
+        st.error(f"Error: {str(e)}")
+    
+    # Force a rerun to display the new messages
+    st.experimental_rerun()
 
 # Check for navigation to the Sign Up page
 if "page" in st.session_state and st.session_state.page == "signup":
