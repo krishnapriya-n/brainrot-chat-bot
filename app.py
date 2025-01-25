@@ -39,6 +39,7 @@ def signup():
         user = auth.create_user_with_email_and_password(email, password)
         st.session_state.user = user
         st.success('Account created sucessfully!')
+        st.markdown("Already have an account? [Login here](#)", unsafe_allow_html=True)  # Added link to login
     except Exception as e:
         st.error(f'Error creating account: {str(e)}')
 
@@ -101,6 +102,7 @@ def handle_google_callback():
     except Exception as e:
        st.error(f'Error handling Google callback: {str(e)}')
        return False
+    
 
 # Load CSS file to style the app (make sure to have a 'style.css' file in your project directory)
 with open("style.css") as css:
@@ -131,6 +133,7 @@ with col3:
             st.text_input("Email", key="signup_email")
             st.text_input("Password", type="password", key="signup_password")
             st.button("Sign Up", key="signup_button", on_click=signup)
+            st.markdown("Already have an account? [Click on the login section](#)", unsafe_allow_html=True)  # Moved link to login
             st.markdown('---')
             google_login()
 
@@ -162,6 +165,7 @@ with col4:
             """, unsafe_allow_html=True)
         with col_right:
             st.image("static/assets/light.png", width=30)  # Sun image
+
 
 
 # Title Section: This section contains the main heading for the app
@@ -226,10 +230,7 @@ if st.session_state.user:
       # Force a rerun to display the new messages
       st.rerun()
 
-  # Check for navigation to the Sign Up page
-    if "page" in st.session_state and st.session_state.page == "signup":
-      # Importing and running signup.py from within the app
-      st.session_state.page = None  # Reset the page state after redirecting
-      os.system("streamlit run signup.py")  # Open the signup.py script in a new Streamlit process
 else:
     st.info('Please log in to continue!')
+
+# New Sign Up Page Section
