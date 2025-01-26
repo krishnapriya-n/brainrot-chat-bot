@@ -374,6 +374,11 @@ body {
   transition: .4s;  /* Smooth transition for other browsers */
 }
 
+/* Textbox input color for light mode */
+.stForm input, .stForm textarea {
+  color: #333;  /* Sets text color to dark gray for better visibility */
+}
+
 /* When the checkbox is checked, the slider changes color */
 input:checked + .slider {
   background-color: #2196F3;  /* Sets the slider background color to blue when checked */
