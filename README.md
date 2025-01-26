@@ -1,4 +1,4 @@
-# Brainrot Study Bot
+# Brainrot Chat Bot
 
 ## Overview 
 Brainrot Study Bot is your new AI-powered study buddy! Designed for hackathon fun and beyond, this chatbot combines learning with entertainment. It’s a chill, conversational tutor that keeps things fresh while helping you grasp complex topics in a simple, relatable way. Think of it as your personal "brain rot" companion for studying!
