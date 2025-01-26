@@ -147,7 +147,7 @@ with col1:
     st.markdown("<div class='top-card'>Leaderboard</div>", unsafe_allow_html=True)
 with col2:
     st.markdown("<div class='top-card'>Friends</div>", unsafe_allow_html=True)
-with col3:
+with col4:
     if handle_google_callback():
         st.rerun()
 
@@ -158,7 +158,7 @@ with col3:
             st.session_state['logout_trigger'] = True
             raise RerunException(RerunData(None))
 
-with col4:
+with col3:
     toggle_container = st.container()
     with toggle_container:
         col_left, col_toggle, col_right = st.columns([1, 2, 1])
@@ -219,81 +219,79 @@ if not st.session_state.user:
 
 else:
     # Chat Interface
-    if "chat_mode" not in st.session_state:
-        st.session_state.chat_mode = "tutor"
+    if st.session_state.user:  # Check if user is logged in
+        if "chat_mode" not in st.session_state:
+            st.session_state.chat_mode = "tutor"
 
-    # Mode Selection
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col1:
-        st.markdown("<div class='mode-selector'>", unsafe_allow_html=True)
-        st.session_state.chat_mode = st.selectbox(
-            "Study Mode",
-            ["tutor", "rubber_duck"],
-            format_func=lambda x: "👩‍🏫 Tutor Mode" if x == "tutor" else "🦆 Rubber Duck Mode"
-        )
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    # Mode description
-    if st.session_state.chat_mode == "rubber_duck":
-        st.markdown("""
-            <div class='mode-description duck'>
-                🦆 <strong>Rubber Duck Mode:</strong> Teach me about any topic! I'll ask questions to help deepen your understanding.
-            </div>
-        """, unsafe_allow_html=True)
-    else:
-        st.markdown("""
-            <div class='mode-description tutor'>
-                👩‍🏫 <strong>Tutor Mode:</strong> I'll help explain concepts in a fun and engaging way!
-            </div>
-        """, unsafe_allow_html=True)
-
-    
-if "messages" not in st.session_state:
-    st.session_state["messages"] = []
-
-# Render messages using Streamlit's native components with custom HTML
-for msg in st.session_state["messages"]:
-    if msg.startswith("You: "):
-        message_content = msg[4:]
-        st.markdown(f'<div class="chat-bubble user-message">{message_content}</div>', unsafe_allow_html=True)
-    elif msg.startswith("Bot: "):
-        message_content = msg[4:]
-        st.markdown(f'<div class="chat-bubble bot-message">{message_content}</div>', unsafe_allow_html=True)
-
-st.markdown("</div>", unsafe_allow_html=True)
-
-# Chat Input
-with st.form(key="chat_form", clear_on_submit=True):
-    col_input, col_button = st.columns([6, 1])
-    with col_input:
-        user_input = st.text_input(
-            "Type your message...",
-            key="chat_input",
-            placeholder="Share your knowledge or ask a question..."
-        )
-    with col_button:
-        submit_button = st.form_submit_button("Send 📤")
-
-    if submit_button and user_input:
-        st.session_state["messages"].append(f"You: {user_input}")
-        
-        try:
-            response = requests.post(
-                "http://localhost:5000/chat",
-                json={
-                    "message": user_input,
-                    "history": st.session_state["messages"],
-                    "mode": st.session_state.chat_mode
-                }
+        # Mode Selection
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col1:
+            st.markdown("<div class='mode-selector'>", unsafe_allow_html=True)
+            st.session_state.chat_mode = st.selectbox(
+                "Study Mode",
+                ["tutor", "rubber_duck"],
+                format_func=lambda x: "👩‍🏫 Tutor Mode" if x == "tutor" else "🦆 Rubber Duck Mode"
             )
-            
-            if response.status_code == 200:
-                bot_response = response.json()["response"]
-                st.session_state["messages"].append(f"Bot: {bot_response}")
-            else:
-                st.error("Failed to get response from the bot. Please try again.")
-                
-        except Exception as e:
-            st.error(f"Error: {str(e)}")
-        
-        st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        # Mode description
+        if st.session_state.chat_mode == "rubber_duck":
+            st.markdown("""
+                <div class='mode-description duck'>
+                    🦆 <strong>Rubber Duck Mode:</strong> Teach me about any topic! I'll ask questions to help deepen your understanding.
+                </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("""
+                <div class='mode-description tutor'>
+                    👩‍🏫 <strong>Tutor Mode:</strong> I'll help explain concepts in a fun and engaging way!
+                </div>
+            """, unsafe_allow_html=True)
+
+        if "messages" not in st.session_state:
+            st.session_state["messages"] = []
+
+        # Render messages using Streamlit's native components with custom HTML
+        for msg in st.session_state["messages"]:
+            if msg.startswith("You: "):
+                message_content = msg[4:]
+                st.markdown(f'<div class="chat-bubble user-message">{message_content}</div>', unsafe_allow_html=True)
+            elif msg.startswith("Bot: "):
+                message_content = msg[4:]
+                st.markdown(f'<div class="chat-bubble bot-message">{message_content}</div>', unsafe_allow_html=True)
+
+        # Chat Input
+        with st.form(key="chat_form", clear_on_submit=True):
+            col_input, col_button = st.columns([3, 1])  # Adjusted column widths for better alignment
+            with col_input:
+                user_input = st.text_input(
+                    "Type your message...",
+                    key="chat_input",
+                    placeholder="Share your knowledge or ask a question..."
+                )
+            with col_button:
+                submit_button = st.form_submit_button("Send 📤")
+
+            if submit_button and user_input:
+                st.session_state["messages"].append(f"You: {user_input}")
+
+                try:
+                    response = requests.post(
+                        "http://localhost:5000/chat",
+                        json={
+                            "message": user_input,
+                            "history": st.session_state["messages"],
+                            "mode": st.session_state.chat_mode
+                        }
+                    )
+
+                    if response.status_code == 200:
+                        bot_response = response.json()["response"]
+                        st.session_state["messages"].append(f"Bot: {bot_response}")
+                    else:
+                        st.error("Failed to get response from the bot. Please try again.")
+
+                except Exception as e:
+                    st.error(f"Error: {str(e)}")
+
+                st.rerun()
