@@ -262,15 +262,31 @@ else:
 
         # Chat Input
         with st.form(key="chat_form", clear_on_submit=True):
-            col_input, col_button = st.columns([3, 1])  # Adjusted column widths for better alignment
+            # Create a single row for input and button
+            col_input, col_button = st.columns([4, 1])  # Adjusted column widths for better alignment
             with col_input:
                 user_input = st.text_input(
                     "Type your message...",
                     key="chat_input",
-                    placeholder="Share your knowledge or ask a question..."
+                    placeholder="Share your knowledge or ask a question...",
+                    label_visibility="collapsed"  # Hide the label for a cleaner look
                 )
             with col_button:
                 submit_button = st.form_submit_button("Send 📤")
+
+            # Add CSS for vertical alignment
+            st.markdown("""
+                <style>
+                    .stTextInput {
+                        display: flex;
+                        align-items: center;
+                    }
+                    
+                    .stTextInput input::placeholder {
+                        color: black;  /* Set placeholder text color to black */
+                    }
+                </style>
+            """, unsafe_allow_html=True)
 
             if submit_button and user_input:
                 st.session_state["messages"].append(f"You: {user_input}")
