@@ -1,15 +1,17 @@
 from flask import Flask, request, jsonify
 from openai import OpenAI
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
-
-# Hardcoded API key (use only for testing or small-scale projects)
-API_KEY = "eyJhbGciOiJIUzI1NiIsImtpZCI6IlV6SXJWd1h0dnprLVRvdzlLZWstc0M1akptWXBvX1VaVkxUZlpnMDRlOFUiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJnb29nbGUtb2F1dGgyfDExMTkwNjM3MTE1NTUyMTEwNDkxMyIsInNjb3BlIjoib3BlbmlkIG9mZmxpbmVfYWNjZXNzIiwiaXNzIjoiYXBpX2tleV9pc3N1ZXIiLCJhdWQiOlsiaHR0cHM6Ly9uZWJpdXMtaW5mZXJlbmNlLmV1LmF1dGgwLmNvbS9hcGkvdjIvIl0sImV4cCI6MTg5NTU1ODU2NiwidXVpZCI6IjdlMTQ1YjM0LTdjNjItNDgwNi05MWQ0LWUyNTJkNjhmYjgzYyIsIm5hbWUiOiJVbm5hbWVkIGtleSIsImV4cGlyZXNfYXQiOiIyMDMwLTAxLTI1VDA4OjAyOjQ2KzAwMDAifQ.YI53577RIQkzszQUjCThKCo_R3iuRDFdHeWKoR09rK0"
 
 # Initialize OpenAI client with Nebius endpoint
 client = OpenAI(
     base_url="https://api.studio.nebius.ai/v1/",
-    api_key=API_KEY
+    api_key=os.environ.get("NEBIUS_API_KEY")
 )
 
 def create_study_prompt(messages, mode="tutor"):
